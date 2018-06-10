@@ -21,9 +21,11 @@ header {
 }
 
 #columnsContainer {
+  position: absolute;
   width: 90%;
   height:70%;
-  margin: 5% 0;
+  top: 15%;
+  left: 5%;
 }
 
 header,
@@ -43,34 +45,33 @@ footer {
 #leftColumn {
   position: relative;
   height: 50%;
-  margin: 12% 5% 0% 5%;
   width: 100%;
   border: solid thin lightgray;
 }
 #rightColumn {
   position: relative;
   height: 50%;
-  margin: 2.5% 5%;
+  /* margin: 2.5% 5%; */
   width: 100%;
   border: solid thin lightgray;
 }
 /* MEDIA QUERIES */
 @media screen and (min-width: 47.5em) {
   #leftColumn {
-    height:70%;
+    height:100%;
     position: absolute;
     top: 0;
-    margin: 2%;
-    width: 70%;
+    margin-right: 2.5%;
+    width: 72.5%;
     border: solid thin lightgray;
   }
   #rightColumn {
-    height:70%;
+    height:100%;
     position: absolute;
     top: 0;
-    margin: 2% 0 0 0;
-    right: 2%;
-    width: 24%;
+    margin: 0;
+    right: 0;
+    width: 25%;
     border: solid thin lightgray;
   }
 }
