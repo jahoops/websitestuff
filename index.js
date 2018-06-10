@@ -1,5 +1,5 @@
-  var now = new Date();
-  var begintick = now.getTime(); // not using right now, but gets ticks (milliseconds) from Jan 1, 1970
+  var gohometick; // bad practice global, but easier for now
+  var gohomeElement; // bad practice global, requestAnimationFrame takes a function only
 
   var rendering = false; // window resize event waits until this is false to request a render
   var firetransitions = false; // transitions only work on a change, like width, so we need to call render twice
@@ -17,11 +17,13 @@
         // create twelve divs and put them inside this content div
         for (var i = 0; i < 12; i++) {
           var div_to_insert = document.createElement('div');
-          div_to_insert.style.transition = 'width 0.3s ease'; // width transition
+          div_to_insert.style.transition = 'left 0.5s ease'; // width transition
+          div_to_insert.style.transition += ',width 0.3s ease'; // width transition
           div_to_insert.style.height = height + 'px';
           div_to_insert.style.width = '1px'; // set to 1 for now, next pass will resize and set off transition
           div_to_insert.style.position = 'absolute';
           div_to_insert.style.left = (i * width / 12) + 'px';
+          div_to_insert.setAttribute('original-left',(i * width / 12));
           div_to_insert.style.backgroundColor = randomColor(); // see randomColor function at bottom
           div_to_insert.style.border = 'solid thin lightgray';
           container_div.appendChild(div_to_insert);
@@ -38,12 +40,39 @@
         var get_divs = document.querySelectorAll('#' + element_ids[e] + ' div'); // get all the divs inside this element
         for (var i = 0; i < get_divs.length; i++) {
           get_divs[i].style.width = width / 12 + 'px'; // now we change the width, and the transition will fire
+          get_divs[i].addEventListener('mousedown', function(e) {
+            var f = function(){
+              var srcElement = e.srcElement;
+              if(!e.shiftKey) {
+                srcElement.style.left = ((parseInt(srcElement.style.left, 10) || 0) + 50) + 'px';
+              } else {
+                gohomeElement = srcElement;
+                var d = new Date();
+                gohometick = d.getTime() + 2000; // two seconds from now
+                requestAnimationFrame(gohome); // back to original-left
+              }
+            };
+            requestAnimationFrame(f);
+          });
         }
       }
       rendering = false;
     } 
   }
 
+  function gohome() {
+    var d = new Date();
+    var ticks = d.getTime();
+    if (ticks < gohometick) {
+      var leftnow = parseInt(gohomeElement.style.left, 10) || 0;
+      var leftorig = gohomeElement.getAttribute('original-left');
+      var x = leftnow + (leftnow - leftorig)/(gohometick-ticks);
+      gohomeElement.style.left = x + 'px';
+      requestAnimationFrame(gohome);
+    } else {
+      gohomeElement.style.left = gohomeElement.getAttribute('original-left') + 'px';
+    }
+  }
   // initial render
   requestAnimationFrame(render);
 
