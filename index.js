@@ -47,6 +47,7 @@
                 srcElement.style.left = ((parseInt(srcElement.style.left, 10) || 0) + 50) + 'px';
               } else {
                 gohomeElement = srcElement;
+                gohomeElement.style.transition = "none !important";
                 var d = new Date();
                 gohometick = d.getTime() + 2000; // two seconds from now
                 requestAnimationFrame(gohome); // back to original-left
@@ -66,7 +67,8 @@
     if (ticks < gohometick) {
       var leftnow = parseInt(gohomeElement.style.left, 10) || 0;
       var leftorig = gohomeElement.getAttribute('original-left');
-      var x = leftnow + (leftnow - leftorig)/(gohometick-ticks);
+      var x = leftnow - (leftnow - leftorig)/(gohometick-ticks);
+      console.log(leftnow, leftorig, x);
       gohomeElement.style.left = x + 'px';
       requestAnimationFrame(gohome);
     } else {
