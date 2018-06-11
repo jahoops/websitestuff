@@ -1,6 +1,3 @@
-  var gohometick; // bad practice global, but easier for now
-  var gohomeElement; // bad practice global, requestAnimationFrame takes a function only
-
   var rendering = false; // window resize event waits until this is false to request a render
   var firetransitions = false; // transitions only work on a change, like width, so we need to call render twice
   function render() {
@@ -25,7 +22,7 @@
           div_to_insert.style.left = (i * width / 12) + 'px';
           div_to_insert.setAttribute('original-left',(i * width / 12));
           div_to_insert.style.backgroundColor = randomColor(); // see randomColor function at bottom
-          div_to_insert.style.border = 'solid thin lightgray';
+          //div_to_insert.style.border = 'solid thin lightgray';
           container_div.appendChild(div_to_insert);
         }
       } 
@@ -50,7 +47,7 @@
                 gohomeElement.style.transition = "none !important";
                 var d = new Date();
                 gohometick = d.getTime() + 2000; // two seconds from now
-                requestAnimationFrame(gohome); // back to original-left
+                requestAnimationFrame( function(){ gohome(gohomeElement,gohometick) } ); // back to original-left
               }
             };
             requestAnimationFrame(f);
@@ -61,16 +58,15 @@
     } 
   }
 
-  function gohome() {
+  function gohome(gohomeElement,gohometick) {
     var d = new Date();
     var ticks = d.getTime();
     if (ticks < gohometick) {
-      var leftnow = parseInt(gohomeElement.style.left, 10) || 0;
+      var leftnow = parseInt(gohomeElement.style.left, 10) || 0; // the || sets to 0 if it can't parse to an integer
       var leftorig = gohomeElement.getAttribute('original-left');
       var x = leftnow - (leftnow - leftorig)/(gohometick-ticks);
-      console.log(leftnow, leftorig, x);
       gohomeElement.style.left = x + 'px';
-      requestAnimationFrame(gohome);
+      requestAnimationFrame( function(){ gohome(gohomeElement,gohometick) } );
     } else {
       gohomeElement.style.left = gohomeElement.getAttribute('original-left') + 'px';
     }
