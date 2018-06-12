@@ -7,6 +7,7 @@
     // if this is the first pass
     if (!firetransitions) {
       for (var e = 0; e < element_ids.length; e++) {
+        var body = document.getElementsByTagName("BODY")[0];
         var container_div = document.getElementById(element_ids[e]);
         container_div.innerHTML = ""; // clear contents
         var height = container_div.offsetHeight;
@@ -23,7 +24,7 @@
           div_to_insert.setAttribute('original-left',(i * width / 12));
           div_to_insert.style.backgroundColor = randomColor(); // see randomColor function at bottom
           //div_to_insert.style.border = 'solid thin lightgray';
-          container_div.appendChild(div_to_insert);
+          body.appendChild(div_to_insert);
         }
       } 
       // NOW, call a second pass, because that will allow our new elements to render on the page
@@ -71,6 +72,22 @@
       gohomeElement.style.left = gohomeElement.getAttribute('original-left') + 'px';
     }
   }
+
+  function moveTo(element,toPosition,fromPosition,arriveTick,speedFunction,pathFunction) {
+    var d = new Date();
+    var ticks = d.getTime();
+    if (ticks < gohometick) {
+      var leftnow = parseInt(gohomeElement.style.left, 10) || 0; // the || sets to 0 if it can't parse to an integer
+      var leftorig = gohomeElement.getAttribute('original-left');
+      var x = leftnow - (leftnow - leftorig)/(gohometick-ticks);
+      gohomeElement.style.left = x + 'px';
+      requestAnimationFrame( function(){ gohome(gohomeElement,gohometick) } );
+    } else {
+      gohomeElement.style.left = gohomeElement.getAttribute('original-left') + 'px';
+    }
+  }
+
+
   // initial render
   requestAnimationFrame(render);
 
