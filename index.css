@@ -17,7 +17,6 @@ body {
 footer,
 header {
   width: 100%;
-  border: solid thin lightgray;
 }
 
 #columnsContainer {
@@ -46,14 +45,12 @@ footer {
   position: relative;
   height: 50%;
   width: 100%;
-  border: solid thin lightgray;
 }
 #rightColumn {
   position: relative;
   height: 50%;
   /* margin: 2.5% 5%; */
   width: 100%;
-  border: solid thin lightgray;
 }
 /* MEDIA QUERIES */
 @media screen and (min-width: 47.5em) {
@@ -63,7 +60,6 @@ footer {
     top: 0;
     margin-right: 2.5%;
     width: 72.5%;
-    border: solid thin lightgray;
   }
   #rightColumn {
     height:100%;
@@ -72,6 +68,5 @@ footer {
     margin: 0;
     right: 0;
     width: 25%;
-    border: solid thin lightgray;
   }
 }

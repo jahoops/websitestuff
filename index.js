@@ -4,24 +4,26 @@
   
   function init() {
     rendering = true;
+    removeElementsByClass('can-move');
     var element_ids = ['header', 'leftColumn', 'rightColumn', 'footer']; // names of my index.html divs
     // if this is the first pass
     for (var e = 0; e < element_ids.length; e++) {
       var container_div = document.getElementById(element_ids[e]);
-      container_div.innerHTML = ""; // clear contents
+      var pos = getPosition(container_div);
       var height = container_div.offsetHeight;
       var width = container_div.offsetWidth;
-      // create twelve divs and put them inside this content div
+      // create twelve divs and position them using this container div
       for (var i = 0; i < 12; i++) {
         var div_to_insert = document.createElement('div');
         div_to_insert.classList.add('can-move');
         div_to_insert.style.height = height + 'px';
         div_to_insert.style.width = (width / 12) + 'px';
         div_to_insert.style.position = 'absolute';
-        div_to_insert.style.left = (i * width / 12) + 'px';
+        div_to_insert.style.top = pos.y + 'px';
+        div_to_insert.style.left = pos.x + (i * width / 12) + 'px';
         div_to_insert.style.backgroundColor = randomColor(); // see randomColor function at bottom
-        //div_to_insert.style.border = 'solid thin lightgray';
-        container_div.appendChild(div_to_insert);
+        // append to body so we are not stuck in another div and can move anywhere
+        body.appendChild(div_to_insert);
       }
     } 
     bindEvents();
@@ -32,7 +34,7 @@
     rendering = true;
     var d = new Date();
     var ticks = d.getTime();
-    var top = parseInt(element.style.top, 10) || 0;
+    var top = parseInt(element.style.top, 10) || 0; // parses to int or is set to zero
     var left = parseInt(element.style.left, 10) || 0;
     var toprate = (state.top-top)/(tickEnd-ticks);
     var leftrate = (state.left-left)/(tickEnd-ticks);
@@ -46,6 +48,7 @@
         element.style.left = left + (leftrate * elapsed) + 'px';
       }
       state.lastTick = ticks;
+      // requestAnimationFrame only accepts functions, pass info along in a function
       requestAnimationFrame( function(){ moveTo(element,state,tickStart,tickEnd); } );
     } else {
       element.style.top = state.top + 'px';
@@ -60,9 +63,10 @@
   requestAnimationFrame(init);
 
   function bindEvents() {
-    var classname = document.getElementsByClassName("can-move");
+    // get array of can-move elements
+    var canMoveArray = document.getElementsByClassName("can-move");
 
-    var myFunction = function() {
+    var onCanMoveClick = function() {
       this.style.border = '2px dotted darkgreen';
       divqueue.push(this);
       if(divqueue.length>1) {    
@@ -70,6 +74,7 @@
         var ticks = d.getTime();    
         var el1 = divqueue.pop();
         var el2 = divqueue.pop();
+        // requestAnimationFrame only accepts functions, so we have to pass info in a function
         requestAnimationFrame(function(){
           var top2 = parseInt(el2.style.top, 10) || 0;
           var left2 = parseInt(el2.style.left, 10) || 0;
@@ -80,12 +85,13 @@
         });
       }
     };
-    
-    for (var i = 0; i < classname.length; i++) {
-        classname[i].addEventListener('click', myFunction, false);
+    // binding all class='can-move' to the 
+    for (var i = 0; i < canMoveArray.length; i++) {
+      canMoveArray[i].addEventListener('click', onCanMoveClick, false);
     }
   }
 
+  // re-initialize on resize
   window.addEventListener('resize', function () {
     if (!rendering) requestAnimationFrame(init);
   });
@@ -133,4 +139,38 @@
     }
 
     return "rgba(" + Math.floor(r * 255) + "," + Math.floor(g * 255) + "," + Math.floor(b * 255) + "," + 0.2 + ")";
+  }
+
+// full explantion here: https://www.kirupa.com/html5/get_element_position_using_javascript.htm
+  function getPosition(el) {
+    var xPos = 0;
+    var yPos = 0;
+   
+    while (el) {
+      if (el.tagName == "BODY") {
+        // deal with browser quirks with body/window/document and page scroll
+        var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
+        var yScroll = el.scrollTop || document.documentElement.scrollTop;
+   
+        xPos += (el.offsetLeft - xScroll + el.clientLeft);
+        yPos += (el.offsetTop - yScroll + el.clientTop);
+      } else {
+        // for all other non-BODY elements
+        xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+        yPos += (el.offsetTop - el.scrollTop + el.clientTop);
+      }
+   
+      el = el.offsetParent;
+    }
+    return {
+      x: xPos,
+      y: yPos
+    };
+  }
+
+  function removeElementsByClass(className){
+      var elements = document.getElementsByClassName(className);
+      while(elements.length > 0){
+          elements[0].parentNode.removeChild(elements[0]);
+      }
   }
