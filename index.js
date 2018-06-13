@@ -15,8 +15,6 @@
       for (var i = 0; i < 12; i++) {
         var div_to_insert = document.createElement('div');
         div_to_insert.classList.add('can-move');
-        div_to_insert.style.transition = 'left 0.5s ease'; // width transition
-        div_to_insert.style.transition += ',width 0.3s ease'; // width transition
         div_to_insert.style.height = height + 'px';
         div_to_insert.style.width = (width / 12) + 'px';
         div_to_insert.style.position = 'absolute';
@@ -26,27 +24,33 @@
         container_div.appendChild(div_to_insert);
       }
     } 
+    bindEvents();
     rendering = false;
   }
 
-  function moveTo(element,arrivePosition,arriveTick,movePerTick) {
+  function moveTo(element,state,tickStart,tickEnd) {
     rendering = true;
     var d = new Date();
     var ticks = d.getTime();
-    var elapsed = arriveTick - ticks;
-    if(!movePerTick) {
-      var top = parseInt(gohomeElement.style.top, 10) || 0;
-      var left = parseInt(gohomeElement.style.left, 10) || 0;
-      movePerTick = { top: (arrivePosition.top - top)/elapsed, left: (arrivePosition.left - left)/elapsed };
-      requestAnimationFrame( function(){ moveTo(element,arrivePosition,arriveTick,movePerTick) } );
+    var top = parseInt(element.style.top, 10) || 0;
+    var left = parseInt(element.style.left, 10) || 0;
+    var toprate = (state.top-top)/(tickEnd-ticks);
+    var leftrate = (state.left-left)/(tickEnd-ticks);
+    if(!state.lastTick) {
+      state.lastTick = ticks;
     }
-    if (elapsed > 0) {
-      element.style.top += (movePerTick.top * elapsed) + 'px';
-      element.style.left += (movePerTick.left * elapsed) + 'px';
-      requestAnimationFrame( function(){ moveTo(element,arrivePosition,arriveTick,movePerTick) } );
+    var elapsed = ticks - state.lastTick;
+    if (tickEnd > state.lastTick) {
+      if(elapsed) {
+        element.style.top = top + (toprate * elapsed) + 'px';
+        element.style.left = left + (leftrate * elapsed) + 'px';
+      }
+      state.lastTick = ticks;
+      requestAnimationFrame( function(){ moveTo(element,state,tickStart,tickEnd); } );
     } else {
-      element.style.top = arrivePosition.top + 'px';
-      element.style.left = arrivePosition.left + 'px';
+      element.style.top = state.top + 'px';
+      element.style.left = state.left + 'px';
+      element.style.border = 'none';
     }
     rendering = false;
   }
@@ -55,24 +59,31 @@
   // initial render
   requestAnimationFrame(init);
 
-  var classname = document.getElementsByClassName("can-move");
+  function bindEvents() {
+    var classname = document.getElementsByClassName("can-move");
 
-  var myFunction = function() {
-    divqueue.push(this);
-    if(divqueue.length>1) {    
-      var d = new Date();
-      var ticks = d.getTime();    
-      var el1 = divqueue.pop();
-      var el2 = divqueue.pop();
-      requestAnimationFrame(function(){
-        moveTo(el1, { top: el2.style.top, left:el2.style.left }, ticks+1000);
-        moveTo(el2, { top: el1.style.top, left:el1.style.left }, ticks+1000);
-      });
+    var myFunction = function() {
+      this.style.border = '2px dotted darkgreen';
+      divqueue.push(this);
+      if(divqueue.length>1) {    
+        var d = new Date();
+        var ticks = d.getTime();    
+        var el1 = divqueue.pop();
+        var el2 = divqueue.pop();
+        requestAnimationFrame(function(){
+          var top2 = parseInt(el2.style.top, 10) || 0;
+          var left2 = parseInt(el2.style.left, 10) || 0;
+          top1 = parseInt(el1.style.top, 10) || 0;
+          left1 = parseInt(el1.style.left, 10) || 0;
+          moveTo(el1, { top: top2, left: left2 }, ticks, ticks+1000);
+          moveTo(el2, { top: top1, left: left1 }, ticks, ticks+1000);
+        });
+      }
+    };
+    
+    for (var i = 0; i < classname.length; i++) {
+        classname[i].addEventListener('click', myFunction, false);
     }
-  };
-  
-  for (var i = 0; i < classname.length; i++) {
-      classname[i].addEventListener('click', myFunction, false);
   }
 
   window.addEventListener('resize', function () {
