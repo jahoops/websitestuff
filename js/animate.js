@@ -30,29 +30,29 @@
     rendering = false;
   }
 
-  function moveTo(element,state,tickStart,tickEnd) {
+  function moveTo(element,targetPos,tickStart,tickEnd,lastTick) {
     rendering = true;
     var d = new Date();
     var ticks = d.getTime();
     var top = parseInt(element.style.top, 10) || 0; // parses to int or is set to zero
     var left = parseInt(element.style.left, 10) || 0;
-    var toprate = (state.top-top)/(tickEnd-ticks);
-    var leftrate = (state.left-left)/(tickEnd-ticks);
-    if(!state.lastTick) {
-      state.lastTick = ticks;
+    var toprate = (targetPos.top-top)/(tickEnd-ticks);
+    var leftrate = (targetPos.left-left)/(tickEnd-ticks);
+    if(!lastTick) {
+        lastTick = ticks;
     }
-    var elapsed = ticks - state.lastTick;
-    if (tickEnd > state.lastTick) {
+    var elapsed = ticks - lastTick;
+    if (tickEnd > lastTick) {
       if(elapsed) {
         element.style.top = top + (toprate * elapsed) + 'px';
         element.style.left = left + (leftrate * elapsed) + 'px';
       }
-      state.lastTick = ticks;
+      lastTick = ticks;
       // requestAnimationFrame only accepts functions, pass info along in a function
       requestAnimationFrame( function(){ moveTo(element,state,tickStart,tickEnd); } );
     } else {
-      element.style.top = state.top + 'px';
-      element.style.left = state.left + 'px';
+      element.style.top = targetPos.top + 'px';
+      element.style.left = targetPos.left + 'px';
       element.style.border = 'none';
     }
     rendering = false;
