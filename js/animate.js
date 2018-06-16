@@ -30,7 +30,7 @@
     rendering = false;
   }
 
-  function moveTo(element,targetPos,tickStart,tickEnd,lastTick) {
+  function moveTo(element,targetPos,tickStart,tickEnd,callback,lastTick) {
     rendering = true;
     var d = new Date();
     var ticks = d.getTime();
@@ -49,11 +49,11 @@
       }
       lastTick = ticks;
       // requestAnimationFrame only accepts functions, pass info along in a function
-      requestAnimationFrame( function(){ moveTo(element,state,tickStart,tickEnd); } );
+      requestAnimationFrame( function(){ moveTo(element,state,tickStart,tickEnd,lastTick); } );
     } else {
       element.style.top = targetPos.top + 'px';
       element.style.left = targetPos.left + 'px';
-      element.style.border = 'none';
+      callback(element);
     }
     rendering = false;
   }
@@ -80,8 +80,8 @@
           var left2 = parseInt(el2.style.left, 10) || 0;
           top1 = parseInt(el1.style.top, 10) || 0;
           left1 = parseInt(el1.style.left, 10) || 0;
-          moveTo(el1, { top: top2, left: left2 }, ticks, ticks+1000);
-          moveTo(el2, { top: top1, left: left1 }, ticks, ticks+1000);
+          moveTo(el1, { top: top2, left: left2 }, ticks, ticks+1000, function(element){ element.style.border = 'none'; });
+          moveTo(el2, { top: top1, left: left1 }, ticks, ticks+1000, function(element){ element.style.border = 'none'; });
         });
       }
     };

@@ -317,6 +317,8 @@ h3 {
   margin: 0 auto;
   overflow: hidden;
   padding: 200px 0;
+  background: url('../img/grass.png');
+  background-size: 100%;
 }
 #slide2 .content {
   position: relative;
@@ -328,6 +330,12 @@ h3 {
   width: 512px;
   background:  url(../img/sprites-cat-running.png);
   animation: sprite .3s steps(8) infinite;
+}
+.ryu.red {
+  background:  url(../img/sprites-cat-running-red.png);
+}
+.ryu.blue {
+  background:  url(../img/sprites-cat-running-blue.png);
 }
 
 @keyframes sprite {
