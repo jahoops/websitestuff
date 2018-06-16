@@ -53,7 +53,7 @@ itm[0].style.display = 'none';
 
 var moveToQueue = [];
 
-function moveToFinished(element){
+function moveToFinished(element) {
   moveToQueue.push(element);
 }
 
@@ -62,31 +62,31 @@ for (var i = 0; i < 30; i++) {
   document.getElementById("slide2").appendChild(cln);
   moveToQueue.push(cln);
 }
-
-window.setInterval(function(){
-  if(moveToQueue.length>0) {
-    var el = moveToQueue.shift();
-    el.classList.remove('red');
-    el.classList.remove('blue');
-    var r = getRandomInt(40, 120);
-    if(r%5 === 0) el.classList.add('red');
-    if(r%40 === 0) el.classList.add('blue');
-    el.style.top = r + 'px';
-    el.style.left = '-1000px';
-    el.style.zIndex = r;
-    el.style.zoom = r/100;
-    el.style.display = 'block';
-    var d = new Date();
-    var ticks = d.getTime();
-    moveTo(
-      el, 
-      {
-        top: parseInt(el.style.top, 10) || 0,
-        left: 4000
-      }, 
-      ticks, 
-      ticks + 3000, 
-      moveToFinished
-    );
-  }
-},getRandomInt(100, 300));
+(function () {
+  window.setInterval(function () {
+    if (moveToQueue.length > 0) {
+      var el = moveToQueue.shift();
+      el.classList.remove('red');
+      el.classList.remove('blue');
+      var r = getRandomInt(40, 120);
+      if (r % 5 === 0) el.classList.add('red');
+      if (r % 40 === 0) el.classList.add('blue');
+      el.style.top = r + 'px';
+      el.style.left = '-1000px';
+      el.style.zIndex = r;
+      el.style.zoom = r / 100;
+      el.style.display = 'block';
+      var d = new Date();
+      var ticks = d.getTime();
+      moveTo(
+        el, {
+          top: parseInt(el.style.top, 10) || 0,
+          left: 4000
+        },
+        ticks,
+        ticks + 3000,
+        moveToFinished
+      );
+    }
+  }, getRandomInt(100, 300));
+})();
