@@ -260,7 +260,10 @@ h3 {
   background:  url(../img/sprites-cat-running-red.png);
 }
 .ryu.blue {
-  background:  url(../img/sprites-cat-running-blue.png);
+  height: 325px;
+  width: 184px;
+  animation: sprite2 1.3s steps(8) infinite;
+  background:  url(../img/capguy-walk-1472.png);
 }
 
 @keyframes sprite {
@@ -268,7 +271,11 @@ h3 {
     background-position: -4096px;
   }
  }
-
+ @keyframes sprite2 {
+  100% {
+    background-position: -1472px;
+  }
+ }
 #slide3 {
   background: url(../img/slide2.png) 50% 0 no-repeat fixed;
   color: #fff;

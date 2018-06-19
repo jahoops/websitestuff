@@ -65,12 +65,17 @@ for (var i = 0; i < 30; i++) {
 (function () {
   window.setInterval(function () {
     if (moveToQueue.length > 0) {
+      var destLeft = 4000;
+      var timeToComplete = 3000;
       var el = moveToQueue.shift();
       el.classList.remove('red');
       el.classList.remove('blue');
       var r = getRandomInt(40, 120);
       if (r % 5 === 0) el.classList.add('red');
-      if (r % 40 === 0) el.classList.add('blue');
+      if (r % 40 === 0) {
+        el.classList.add('blue');
+        timeToComplete = 35000;
+      }
       el.style.top = r + 'px';
       el.style.left = '-1000px';
       el.style.zIndex = r;
@@ -81,10 +86,10 @@ for (var i = 0; i < 30; i++) {
       moveTo(
         el, {
           top: parseInt(el.style.top, 10) || 0,
-          left: 4000
+          left: destLeft
         },
         ticks,
-        ticks + 3000,
+        ticks + timeToComplete,
         moveToFinished
       );
     }
